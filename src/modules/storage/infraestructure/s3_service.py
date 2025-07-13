@@ -87,19 +87,7 @@ class S3Service(IStorageService):
                 self.s3_client.head_bucket, Bucket=self.bucket_name
             )
         except Exception:
-            # Bucket doesn't exist, create it
-            if self.region_name == "us-east-1":
-                # us-east-1 doesn't need LocationConstraint
-                await asyncio.to_thread(
-                    self.s3_client.create_bucket,
-                    Bucket=self.bucket_name
-                )
-            else:
-                await asyncio.to_thread(
-                    self.s3_client.create_bucket,
-                    Bucket=self.bucket_name,
-                    CreateBucketConfiguration={'LocationConstraint': self.region_name}
-                )
+            raise Exception(f"Bucket {self.bucket_name} does not exist")
 
     async def clear_bucket(self) -> None:
         """
